@@ -89,6 +89,8 @@ public class ChipGroup extends FlowLayout {
   @Dimension private int chipSpacingVertical;
   private boolean singleSelection;
 
+  private boolean requiredSelection;
+
   @Nullable private OnCheckedChangeListener onCheckedChangeListener;
 
   private final CheckedStateTracker checkedStateTracker = new CheckedStateTracker();
@@ -126,10 +128,18 @@ public class ChipGroup extends FlowLayout {
         a.getDimensionPixelOffset(R.styleable.ChipGroup_chipSpacingVertical, chipSpacing));
     setSingleLine(a.getBoolean(R.styleable.ChipGroup_singleLine, false));
     setSingleSelection(a.getBoolean(R.styleable.ChipGroup_singleSelection, false));
+
     int checkedChip = a.getResourceId(R.styleable.ChipGroup_checkedChip, View.NO_ID);
     if (checkedChip != View.NO_ID) {
       checkedId = checkedChip;
     }
+
+    requiredSelection = a.getBoolean(R.styleable.ChipGroup_chipSelectionRequired, false);
+    if (requiredSelection && checkedId == View.NO_ID) {
+      throw new IllegalArgumentException("If requiredSelection is set to true you need to provide" +
+          " a value for checkedChip attribute");
+    }
+    setRequiredSelection(requiredSelection);
 
     a.recycle();
     super.setOnHierarchyChangeListener(passThroughListener);
@@ -306,6 +316,10 @@ public class ChipGroup extends FlowLayout {
    * @see #getCheckedChipIds()
    */
   public void clearCheck() {
+    if (requiredSelection) {
+      //we don't allow to clear all the checks if requiredSelection is active
+      return;
+    }
     protectFromCheckedChange = true;
     for (int i = 0; i < getChildCount(); i++) {
       View child = getChildAt(i);
@@ -433,6 +447,12 @@ public class ChipGroup extends FlowLayout {
     }
   }
 
+  public void setRequiredSelection(boolean requiredSelection) {
+    if (this.requiredSelection != requiredSelection) {
+      this.requiredSelection = requiredSelection;
+    }
+  }
+
   /**
    * Sets whether this chip group only allows a single chip to be checked.
    *
@@ -458,8 +478,12 @@ public class ChipGroup extends FlowLayout {
         }
         setCheckedId(id);
       } else {
-        if (checkedId == id) {
-          setCheckedId(View.NO_ID);
+        if (requiredSelection && getCheckedChipIds().size() == 0) {
+          setCheckedStateForView(id, true);
+        } else {
+          if (checkedId == id) {
+            setCheckedId(View.NO_ID);
+          }
         }
       }
     }

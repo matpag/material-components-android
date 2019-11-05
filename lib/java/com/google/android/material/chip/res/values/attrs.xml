@@ -153,6 +153,10 @@
     <!-- The id of the child chip that should be checked by default within this chip group. -->
     <attr name="checkedChip" format="reference"/>
 
+    <!-- Whether at least a chip should be selected. By default this is false and a ChipGroup
+         can have all the chips unselected -->
+    <attr name="chipSelectionRequired" format="boolean"/>
+
   </declare-styleable>
 
 </resources>
