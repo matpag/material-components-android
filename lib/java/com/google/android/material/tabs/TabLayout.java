@@ -1808,7 +1808,7 @@ public class TabLayout extends HorizontalScrollView {
       // If we're scrollable, or fixed at start, inset using padding
       paddingStart = Math.max(0, contentInsetStart - tabPaddingStart);
     }
-    ViewCompat.setPaddingRelative(slidingTabIndicator, paddingStart, 0, 0, 0);
+    ViewCompat.setPaddingRelative(slidingTabIndicator, paddingStart, 0, tabPaddingEnd, 0);
 
     switch (mode) {
       case MODE_AUTO:
@@ -3128,9 +3128,21 @@ public class TabLayout extends HorizontalScrollView {
         tabViewContentWidth = minIndicatorWidth;
       }
 
-      int tabViewCenter = (tabView.getLeft() + tabView.getRight()) / 2;
-      int contentLeftBounds = tabViewCenter - (tabViewContentWidth / 2);
-      int contentRightBounds = tabViewCenter + (tabViewContentWidth / 2);
+      int contentLeftBounds = 0;
+      int contentRightBounds = 0;
+      switch (tabGravity) {
+        case GRAVITY_START:
+        case GRAVITY_FILL:
+          contentLeftBounds = tabView.getLeft();
+          contentRightBounds = tabView.getRight();
+          break;
+        case GRAVITY_CENTER:
+          int tabViewCenter = (tabView.getLeft() + tabView.getRight()) / 2;
+          contentLeftBounds = tabViewCenter - (tabViewContentWidth / 2);
+          contentRightBounds = tabViewCenter + (tabViewContentWidth / 2);
+      }
+      contentLeftBounds = Math.max(contentLeftBounds, contentLeftBounds + tabPaddingStart);
+      contentRightBounds = Math.max(0, contentRightBounds - tabPaddingEnd);
 
       contentBounds.set(contentLeftBounds, 0, contentRightBounds, 0);
     }
