@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout 
+<androidx.coordinatorlayout.widget.CoordinatorLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
@@ -35,7 +35,8 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:collapsedTitleTextAppearance="?attr/textAppearanceHeadline6"
-      app:expandedTitleGravity="bottom"
+      app:expandedTitleGravity="bottom|start"
+      app:collapsedTitleGravity="start"
       app:expandedTitleMarginBottom="24dp"
       app:expandedTitleMarginStart="16dp"
       app:expandedTitleTextAppearance="?attr/textAppearanceHeadline5"

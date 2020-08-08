@@ -45,7 +45,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.core.math.MathUtils;
-import androidx.core.text.TextDirectionHeuristicsCompat;
 import com.google.android.material.animation.AnimationUtils;
 import com.google.android.material.internal.StaticLayoutBuilderCompat.StaticLayoutBuilderCompatException;
 import com.google.android.material.resources.CancelableFontCallback;
@@ -215,7 +214,7 @@ public final class CollapsingTextHelper {
   }
 
   public void getCollapsedTextActualBounds(@NonNull RectF bounds, int labelWidth, int textGravity) {
-    isRtl = calculateIsRtl(text);
+    isRtl = ViewUtils.isLayoutRtl(view);
     bounds.left = getCollapsedTextLeftBound(labelWidth, textGravity);
     bounds.top = collapsedBounds.top;
     bounds.right = getCollapsedTextRightBound(bounds, labelWidth, textGravity);
@@ -723,17 +722,6 @@ public final class CollapsingTextHelper {
         textPaint);
   }
 
-  private boolean calculateIsRtl(@NonNull CharSequence text) {
-    final boolean defaultIsRtl = isDefaultIsRtl();
-    return (defaultIsRtl
-        ? TextDirectionHeuristicsCompat.FIRSTSTRONG_RTL
-        : TextDirectionHeuristicsCompat.FIRSTSTRONG_LTR)
-        .isRtl(text, 0, text.length());
-  }
-
-  private boolean isDefaultIsRtl() {
-    return ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_RTL;
-  }
 
   private void setInterpolatedTextSize(float textSize) {
     calculateUsingTextSize(textSize);
@@ -811,7 +799,7 @@ public final class CollapsingTextHelper {
       // Use linear text scaling if we're scaling the canvas
       textPaint.setLinearText(scale != 1f);
 
-      isRtl = calculateIsRtl(text);
+      isRtl = ViewUtils.isLayoutRtl(view);
       textLayout = createStaticLayout(shouldDrawMultiline() ? maxLines : 1, availableWidth, isRtl);
       textToDraw = textLayout.getText();
     }
